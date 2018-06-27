@@ -3,7 +3,28 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ASUPWebApplication", "ASUPWebApplication\ASUPWebApplication.csproj", "{1CF732FB-E3CD-40A3-8B93-C8B3E9B2F5FD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{ED750BAF-DEA1-4208-8916-C60181C4F0C1} = {ED750BAF-DEA1-4208-8916-C60181C4F0C1}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeeAllClassLibrary", "SeeAllClassLibrary\SeeAllClassLibrary.csproj", "{ED750BAF-DEA1-4208-8916-C60181C4F0C1}"
+EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1CF732FB-E3CD-40A3-8B93-C8B3E9B2F5FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1CF732FB-E3CD-40A3-8B93-C8B3E9B2F5FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1CF732FB-E3CD-40A3-8B93-C8B3E9B2F5FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1CF732FB-E3CD-40A3-8B93-C8B3E9B2F5FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED750BAF-DEA1-4208-8916-C60181C4F0C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED750BAF-DEA1-4208-8916-C60181C4F0C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED750BAF-DEA1-4208-8916-C60181C4F0C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED750BAF-DEA1-4208-8916-C60181C4F0C1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
