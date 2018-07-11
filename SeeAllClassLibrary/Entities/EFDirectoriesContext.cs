@@ -1,4 +1,5 @@
 ﻿using SeeAllClassLibrary.Directories;
+using SeeAllClassLibrary.Initializers;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -14,5 +15,12 @@ namespace SeeAllClassLibrary.Entities
         public DbSet<Workshop> Workshops { get; set; }
         public DbSet<Department> Departments { get; set; }
         public DbSet<Point> Points { get; set; }
+
+        static EFDirectoriesContext()
+        {
+            Database.SetInitializer<EFDirectoriesContext>(new SeeAllClassLibraryDbInitializer());
+        }
+
+        public EFDirectoriesContext() : base("SeeAllClassLibrary") { }
     }
 }

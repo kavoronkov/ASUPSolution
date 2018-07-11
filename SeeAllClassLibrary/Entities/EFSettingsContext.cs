@@ -11,6 +11,6 @@ namespace SeeAllClassLibrary.Entities
     public class EFSettingsContext : DbContext
     {
         public DbSet<PLCSettings> SettingsPLC { get; set; }
-        public DbSet<SeeAllSettings> SettingsSeeAll { get; set; }
+        public DbSet<PointSeeAllSettings> SettingsPointSeeAll { get; set; }
     }
 }

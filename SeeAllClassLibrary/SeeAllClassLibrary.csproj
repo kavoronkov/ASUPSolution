@@ -83,13 +83,14 @@
     <Compile Include="Initializers\SeeAllClassLibraryDbInitializer.cs" />
     <Compile Include="Models\Datetime.cs" />
     <Compile Include="Models\Downtime.cs" />
+    <Compile Include="Models\WorkCenter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\EFDirectoriesRepository.cs" />
     <Compile Include="Repositories\EFModelsRepository.cs" />
     <Compile Include="Repositories\EFSeeAllRepository.cs" />
     <Compile Include="Repositories\EFSettingsRepository.cs" />
     <Compile Include="Settings\PLCSettings.cs" />
-    <Compile Include="Settings\SeeAllSettings.cs" />
+    <Compile Include="Settings\PointSeeAllSettings.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

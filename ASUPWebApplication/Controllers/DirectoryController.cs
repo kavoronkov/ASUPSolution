@@ -7,16 +7,16 @@ using System.Web.Mvc;
 
 namespace ASUPWebApplication.Controllers
 {
-    public class AdminController : Controller
+    public class DirectoryController : Controller
     {
-        ISeeAllRepository seeAllRepository;
+        IDirectoriesRepository directoriesRepository;
 
-        public AdminController(ISeeAllRepository repository)
+        public DirectoryController(IDirectoriesRepository repository)
         {
-            seeAllRepository = repository;
+            directoriesRepository = repository;
         }
 
-        // GET: Admin
+        // GET: Directory
         public ViewResult Index()
         {
             return View();

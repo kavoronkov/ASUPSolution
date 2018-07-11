@@ -20,16 +20,17 @@ namespace SeeAllClassLibrary.Entities
 
         public DbSet<Datetime> Datetimes { get; set; }
         public DbSet<Downtime> Downtimes { get; set; }
+        public DbSet<WorkCenter> WorkCenters { get; set; }
 
         public DbSet<PLCSettings> SettingsPLC { get; set; }
-        public DbSet<SeeAllSettings> SettingsSeeAll { get; set; }
+        public DbSet<PointSeeAllSettings> SettingsPointSeeAll { get; set; }
                 
-        static EFSeeAllContext()
-        {
-            Database.SetInitializer<EFSeeAllContext>(new SeeAllClassLibraryDbInitializer());
-        }
+        //static EFSeeAllContext()
+        //{
+        //    Database.SetInitializer<EFSeeAllContext>(new SeeAllClassLibraryDbInitializer());
+        //}
 
-        public EFSeeAllContext() : base("SeeAllClassLibrary") { }
+        //public EFSeeAllContext() : base("SeeAllClassLibrary") { }
     }
 }
 

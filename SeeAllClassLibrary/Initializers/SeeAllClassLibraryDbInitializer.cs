@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace SeeAllClassLibrary.Initializers
 {
-    public class SeeAllClassLibraryDbInitializer : DropCreateDatabaseAlways<EFSeeAllContext>
+    public class SeeAllClassLibraryDbInitializer : DropCreateDatabaseAlways<EFDirectoriesContext>
     {
-        protected override void Seed(EFSeeAllContext context)
+        protected override void Seed(EFDirectoriesContext context)
         {
             context.Plants.Add(new Plant { PlantName = "Interpipe_NTRP" });
             context.SaveChanges();

@@ -18,9 +18,9 @@ namespace SeeAllClassLibrary.Repositories
             get { return context.SettingsPLC; }
         }
 
-        public IEnumerable<SeeAllSettings> SettingsSeeAll
+        public IEnumerable<PointSeeAllSettings> SettingsPointSeeAll
         {
-            get { return context.SettingsSeeAll; }
+            get { return context.SettingsPointSeeAll; }
         }
     }
 }

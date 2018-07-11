@@ -9,13 +9,13 @@ using System.Threading.Tasks;
 
 namespace SeeAllClassLibrary.Settings
 {
-    public class SeeAllSettings
+    public class PointSeeAllSettings
     {
         // [Display(Name = "Идентификатор автоматизированной системы", ResourceType = typeof(SeeAllSettings))]
         [Key] // primary key
         [Required] // is not null
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int SeeAllId { get; set; }
+        public int PointSeeAllId { get; set; }
 
         // [Display(Name = "Время перехода смен", ResourceType = typeof(SeeAllSettings))]
         [Required] // is not null

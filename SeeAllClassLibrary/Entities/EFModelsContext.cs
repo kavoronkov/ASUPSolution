@@ -12,5 +12,6 @@ namespace SeeAllClassLibrary.Entities
     {
         public DbSet<Datetime> Datetimes { get; set; }
         public DbSet<Downtime> Downtimes { get; set; }
+        public DbSet<WorkCenter> WorkCenters { get; set; }
     }
 }

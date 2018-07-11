@@ -20,6 +20,6 @@ namespace SeeAllClassLibrary.Abstract
         IEnumerable<Point> Points { get; }
 
         IEnumerable<PLCSettings> SettingsPLC { get; }
-        IEnumerable<SeeAllSettings> SettingsSeeAll { get; }
+        IEnumerable<PointSeeAllSettings> SettingsPointSeeAll { get; }
     }
 }

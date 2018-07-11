@@ -10,6 +10,6 @@ namespace SeeAllClassLibrary.Abstract
     public interface ISettingsRepository
     {
         IEnumerable<PLCSettings> SettingsPLC { get; }
-        IEnumerable<SeeAllSettings> SettingsSeeAll { get; }
+        IEnumerable<PointSeeAllSettings> SettingsPointSeeAll { get; }
     }
 }
