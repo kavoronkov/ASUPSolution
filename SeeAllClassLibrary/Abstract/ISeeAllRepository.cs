@@ -13,6 +13,7 @@ namespace SeeAllClassLibrary.Abstract
     {
         IEnumerable<Datetime> Datetimes { get; }
         IEnumerable<Downtime> Downtimes { get; }
+        IEnumerable<WorkCenter> WorkCenters { get; }
 
         IEnumerable<Plant> Plants { get; }
         IEnumerable<Workshop> Workshops { get; }
