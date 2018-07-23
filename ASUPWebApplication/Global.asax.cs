@@ -21,8 +21,8 @@ namespace ASUPWebApplication
             var dbASUPWebApplication = new ApplicationDbContext();
             dbASUPWebApplication.Database.Initialize(true);
 
-            Database.SetInitializer<EFSeeAllContext>(new SeeAllClassLibraryDbInitializer());
-            var dbSeeAllClassLibrary = new EFSeeAllContext();
+            Database.SetInitializer<EFDirectoriesContext>(new SeeAllClassLibraryDbInitializer());
+            var dbSeeAllClassLibrary = new EFDirectoriesContext();
             dbSeeAllClassLibrary.Database.Initialize(true);
 
             AreaRegistration.RegisterAllAreas();
