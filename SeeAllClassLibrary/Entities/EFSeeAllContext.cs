@@ -24,13 +24,13 @@ namespace SeeAllClassLibrary.Entities
 
         public DbSet<PLCSettings> SettingsPLC { get; set; }
         public DbSet<PointSeeAllSettings> SettingsPointSeeAll { get; set; }
-                
-        //static EFSeeAllContext()
-        //{
-        //    Database.SetInitializer<EFSeeAllContext>(new SeeAllClassLibraryDbInitializer());
-        //}
 
-        //public EFSeeAllContext() : base("SeeAllClassLibrary") { }
+        static EFSeeAllContext()
+        {
+            Database.SetInitializer<EFSeeAllContext>(new SeeAllClassLibraryDbInitializer());
+        }
+
+        public EFSeeAllContext() : base("SeeAllClassLibrary") { }
     }
 }
 

@@ -16,11 +16,11 @@ namespace SeeAllClassLibrary.Entities
         public DbSet<Department> Departments { get; set; }
         public DbSet<Point> Points { get; set; }
 
-        static EFDirectoriesContext()
-        {
-            Database.SetInitializer<EFDirectoriesContext>(new SeeAllClassLibraryDbInitializer());
-        }
+        //static EFDirectoriesContext()
+        //{
+        //    Database.SetInitializer<EFDirectoriesContext>(new SeeAllClassLibraryDbInitializer());
+        //}
 
-        public EFDirectoriesContext() : base("SeeAllClassLibrary") { }
+        //public EFDirectoriesContext() : base("SeeAllClassLibrary") { }
     }
 }

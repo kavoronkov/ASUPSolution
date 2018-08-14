@@ -22,6 +22,10 @@ namespace SeeAllClassLibrary.Models
         [StringLength(32)] // [MaxLength(32)]
         public string PLCIp { get; set; }
 
+        // [Display(Name = "Тип CPU", ResourceType = typeof(WorkCenter))]
+        [Required] // is not null
+        public int CpuType { get; set; }
+
         // [Display(Name = "Номер стойки CPU", ResourceType = typeof(WorkCenter))]
         [Required] // is not null
         public int RackCPU { get; set; }

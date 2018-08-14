@@ -1,4 +1,5 @@
-﻿using SeeAllClassLibrary.Models;
+﻿using SeeAllClassLibrary.Initializers;
+using SeeAllClassLibrary.Models;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -13,5 +14,7 @@ namespace SeeAllClassLibrary.Entities
         public DbSet<Datetime> Datetimes { get; set; }
         public DbSet<Downtime> Downtimes { get; set; }
         public DbSet<WorkCenter> WorkCenters { get; set; }
+
+        public EFModelsContext() : base("EFModelsClassLibrary") { }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using SeeAllClassLibrary.Directories;
+using SeeAllClassLibrary.Models;
 using SeeAllClassLibrary.Entities;
 using System;
 using System.Collections.Generic;
@@ -6,12 +7,13 @@ using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SeeAllClassLibrary.Controllers;
 
 namespace SeeAllClassLibrary.Initializers
 {
-    public class SeeAllClassLibraryDbInitializer : DropCreateDatabaseAlways<EFDirectoriesContext>
+    public class SeeAllClassLibraryDbInitializer : DropCreateDatabaseAlways<EFSeeAllContext>
     {
-        protected override void Seed(EFDirectoriesContext context)
+        protected override void Seed(EFSeeAllContext context)
         {
             context.Plants.Add(new Plant { PlantName = "Interpipe_NTRP" });
             context.SaveChanges();
@@ -72,6 +74,41 @@ namespace SeeAllClassLibrary.Initializers
             });
             context.SaveChanges();
             // -------------------------------------------------------------------------------------------------------
+
+            context.WorkCenters.Add(new WorkCenter
+            {
+                PLCIp = "192.168.1.50",
+                CpuType = 1,
+                RackCPU = 0,
+                SlotCPU = 1,
+                DataBlockDatetime = 2,
+                DataBlockLimit = 3,                
+                MicroDowntime = 60,
+                Cycle = 120,
+                Work = false,
+                Transitions = "7,15,23",
+                PointId = context.Points.FirstOrDefault(x => x.PointName == "Prokat_UchastokProkata_TPC5_Interpipe_NTRP").PointId
+            });
+            context.SaveChanges();
+
+            //context.WorkCenters.Add(new WorkCenter
+            //{
+            //    PLCIp = "192.168.0.201",
+            //    CpuType = 4,
+            //    RackCPU = 0,
+            //    SlotCPU = 2,
+            //    DataBlockLimit = 41,
+            //    DataBlockDatetime = 35,
+            //    MicroDowntime = 60,
+            //    Cycle = 120,
+            //    Work = false,
+            //    Transitions = "7,15,23",
+            //    PointId = context.Points.FirstOrDefault(x => x.PointName == "Prokat_UchastokProkata_TPC5_Interpipe_NTRP").PointId
+            //});
+            //context.SaveChanges();
+            // -------------------------------------------------------------------------------------------------------
+
+            new StarterPoints();
         }
     }
 }

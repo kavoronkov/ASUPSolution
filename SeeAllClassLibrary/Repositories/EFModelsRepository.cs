@@ -22,5 +22,10 @@ namespace SeeAllClassLibrary.Repositories
         {
             get { return context.Downtimes; }
         }
+
+        public IEnumerable<WorkCenter> WorkCenter
+        {
+            get { return context.WorkCenters; }
+        }
     }
 }
