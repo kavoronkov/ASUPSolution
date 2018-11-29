@@ -22,8 +22,8 @@ namespace SeeAllClassLibrary.Entities
         public DbSet<Downtime> Downtimes { get; set; }
         public DbSet<WorkCenter> WorkCenters { get; set; }
 
-        public DbSet<PLCSettings> SettingsPLC { get; set; }
-        public DbSet<PointSeeAllSettings> SettingsPointSeeAll { get; set; }
+        // public DbSet<PLCSettings> SettingsPLC { get; set; }
+        // public DbSet<SettingsSeeAll> SettingsSeeAll { get; set; }
 
         static EFSeeAllContext()
         {

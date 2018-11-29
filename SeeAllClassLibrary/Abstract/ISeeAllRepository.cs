@@ -20,7 +20,7 @@ namespace SeeAllClassLibrary.Abstract
         IEnumerable<Department> Departments { get; }
         IEnumerable<Point> Points { get; }
 
-        IEnumerable<PLCSettings> SettingsPLC { get; }
-        IEnumerable<PointSeeAllSettings> SettingsPointSeeAll { get; }
+        // IEnumerable<PLCSettings> SettingsPLC { get; }
+        // IEnumerable<SettingsSeeAll> SettingsSeeAll { get; }
     }
 }

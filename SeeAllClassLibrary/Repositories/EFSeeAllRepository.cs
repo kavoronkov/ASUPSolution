@@ -50,14 +50,14 @@ namespace SeeAllClassLibrary.Repositories
             get { return context.Points; }
         }
 
-        public IEnumerable<PLCSettings> SettingsPLC
-        {
-            get { return context.SettingsPLC; }
-        }
-
-        public IEnumerable<PointSeeAllSettings> SettingsPointSeeAll
-        {
-            get { return context.SettingsPointSeeAll; }
-        }
+        // public IEnumerable<PLCSettings> SettingsPLC
+        // {
+        //     get { return context.SettingsPLC; }
+        // }
+        // 
+        // public IEnumerable<SettingsSeeAll> SettingsSeeAll
+        // {
+        //     get { return context.SettingsSeeAll; }
+        // }
     }
 }

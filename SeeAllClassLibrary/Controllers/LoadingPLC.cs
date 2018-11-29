@@ -1,5 +1,10 @@
 ﻿using S7.Net;
+using SeeAllClassLibrary.Abstract;
+using SeeAllClassLibrary.CreatorsPLC;
 using SeeAllClassLibrary.Models;
+using SeeAllClassLibrary.PLC;
+using SeeAllClassLibrary.Settings;
+using SeeAllClassLibrary.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,42 +14,136 @@ using System.Threading.Tasks;
 
 namespace SeeAllClassLibrary.Controllers
 {
-    class LoadingPLC
+    public class LoadingPLC
     {
-        public int byteStep { get; set; }
-        public string dbPLC { get; set; }
-        public string dbwPLC { get; set; }
-        public int waitingTime { get; set; }            // waiting time for open connection PLC
-        public int numberAttempts { get; set; }         // number of connection attempts
-        public bool statusConnection { get; set; }      // status of connection to PLC
-        public bool equalityCheck { get; set; }         // equality check of write and read position PLC
-        public short prefixForAsp { get; }
-        private int sleepTimeConnCpu = 100;            // mc
+        public bool StatusConnectionPLC { get; set; }              // status of connection to PLC
 
-        private WorkCenter itemWorkCenter;
-        private CpuType cpuType;
+        // private const int BYTE_STEP_DB = 12;
+        // private const long EX_NUMBER_OVERFLOW_DB = -2146233088;
 
-        public LoadingPLC(WorkCenter itemWorkCenter)
+        private WorkCenter workCenter { get; set; }
+        private AbstractPlc abstractPlc { get; set; }
+        private AbstractCreatorPlc abstractCreatorPlc { get; set; }
+
+        public LoadingPLC(WorkCenter objectWorkCenter)
         {
-            this.itemWorkCenter = itemWorkCenter;
-            byteStep = 12;
-            dbPLC = "DB";
-            dbwPLC = ".DBW0"; // aspPrefix = 2bayt then need -2b
-            waitingTime = 100;
-            numberAttempts = 10;
-            prefixForAsp = 2;
-            statusConnection = false;
-            equalityCheck = false;
-            cpuType = new SelectCpuTypeConnect().GetCpuType(itemWorkCenter.CpuType);
-
-
+            StatusConnectionPLC = false;
+            workCenter = objectWorkCenter;
+            workCenter.JSONDeserializeDictionary();
+            GetTypePLC();
         }
 
-        // All index
-        public List<Datetime> ReadAllFromCpu(int startIndex, string finishIndex)
+        private void GetTypePLC()
         {
-            int maxIndex = 10000;
-            return ReadAllFromCpu(startIndex, maxIndex);
+            try
+            {
+                string nameCpu = GetNameCpu(workCenter.DictionaryWorkCenterSettings);
+                if (nameCpu != "")
+                {
+                    switch (nameCpu)
+                    {
+                        case "Arduino": { abstractCreatorPlc = new CreatorArduinoPlc(); break; }
+                        case "Raspberry": { abstractCreatorPlc = new CreatorRaspberryPlc(); break; }
+                        case "Siemens": { abstractCreatorPlc = new CreatorSiemensPlc(); break; }
+
+                        default: { abstractCreatorPlc = new CreatorSiemensPlc(); break; }
+                    }
+                    abstractPlc = abstractCreatorPlc.CreatePlc();
+                }
+            }
+            catch (ArgumentNullException argumentNullException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            
+        }
+
+        // index from to
+        public List<Datetime> ReadAllCpu()
+        {
+            string nameCpu = GetNameCpu(workCenter.DictionaryWorkCenterSettings);
+            if (nameCpu != "")
+            {
+                if (nameCpu == "Siemens")
+                {
+                    int typeCpu = -1;
+                    string plcIp = "";
+                    int rackCpu = -1;
+                    int slotCpu = -1;
+                    int threadSleepTime = -1;
+                    long exNumberOverflowDB = -1;
+
+                    int startIndex = 0;
+                    List<Datetime> dtList = new List<Datetime>();
+
+                    try
+                    {
+                        typeCpu = UtilityClass.StringToInt32FromDictionary(workCenter.DictionaryWorkCenterSettings, "TypeCpu");
+                        plcIp = UtilityClass.StringToStringFromDictionary(workCenter.DictionaryWorkCenterSettings, "PlcIp");
+                        rackCpu = UtilityClass.StringToInt32FromDictionary(workCenter.DictionaryWorkCenterSettings, "RackCpu");
+                        slotCpu = UtilityClass.StringToInt32FromDictionary(workCenter.DictionaryWorkCenterSettings, "SlotCpu");
+                        threadSleepTime = UtilityClass.StringToInt32FromDictionary(workCenter.DictionaryWorkCenterSettings, "ThreadSleepTime");
+                        exNumberOverflowDB = UtilityClass.StringToInt64FromDictionary(workCenter.DictionaryWorkCenterSettings, "ExNumberOverflowDB");
+
+                        if (typeCpu >= 0 && plcIp != "" && rackCpu >= 0 && slotCpu >= 0 && threadSleepTime >= 0 && exNumberOverflowDB >= 0)
+                        {
+                            using (var plc = new Plc(GetTypeCpu(typeCpu), plcIp, (short)rackCpu, (short)slotCpu))  //"172.17.132.200"       "127.0.0.1"
+                            {
+                                Thread.Sleep(threadSleepTime);
+                                plc.Open();
+
+                                for (int index = startIndex; ; index++)
+                                {
+                                    Datetime readDt = ReadDateTime(plc, index);
+
+                                    if (CheckConnectionFailed(readDt))
+                                        dtList = null;
+
+                                    if (readDt.DatetimeId == exNumberOverflowDB)
+                                    {
+                                        return dtList;
+                                    }
+
+                                    if (readDt != null)
+                                    {
+                                        dtList.Add(readDt);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        dtList = null;
+                    }
+
+                    return dtList;
+                }
+                else return null;
+            }
+            else return null;
+        }
+
+
+        // loading Datetime from the CPU
+        private Datetime ReadDateTime(Plc plc, int startByteAdress)
+        {
+            for (int i = 0; i < workCenterSettings.NumberAttemptsConnection; i++)  // counter
+            {
+                Datetime datetime = ReadDatetimeLogics(plc, startByteAdress);
+                if (datetime != null)
+                {
+                    StatusConnectionPLC = true;
+                    return datetime;
+                }
+                Thread.Sleep(workCenterSettings.ConnectionSleepTime);     //msec
+            }
+            StatusConnectionPLC = false;
+            return null;   // There aren't data
         }
 
         // If in a row Index = null THEN finish this connection and start new connection
@@ -66,72 +165,15 @@ namespace SeeAllClassLibrary.Controllers
             return false;
         }
 
-        // index from to
-        public List<Datetime> ReadAllFromCpu(int startIndex, int finishIndex)
-        {
-            List<Datetime> dtList = new List<Datetime>();
-            try
-            {
-                using (var plc = new Plc(
-                    cpuType,
-                    itemWorkCenter.PLCIp,
-                    (short)itemWorkCenter.RackCPU,
-                    (short)itemWorkCenter.SlotCPU))   //"172.17.132.200"       "127.0.0.1"
-                    {
-                        Thread.Sleep(waitingTime);
-                        plc.Open();
-                        for (int index = startIndex; index < finishIndex; index++)
-                        {
-                            Datetime readDt = ReadDateTime(plc, index);
-                            
-                            if (CheckConnectionFailed(readDt))
-                                return null;
-
-                            if (readDt.DatetimeId == -2146233088)
-                            {
-                                return dtList;
-                            }
-                            if (readDt != null)
-                            {
-                                dtList.Add(readDt);
-                            }
-                        }
-                    }
-            }
-            catch (Exception ex)
-            {
-                //string e = ex.Message;
-                return null;
-            }
-            return dtList;
-        }
-
-        // loading Datetime from the CPU
-        public Datetime ReadDateTime(Plc plc, int startByteAdress)
-        {
-            for (int i = 0; i < numberAttempts; i++)  // counter
-            {
-                Datetime datetime = ReadDatetimeLogics(plc, startByteAdress);                
-                if (datetime != null)
-                {
-                    statusConnection = true;
-                    return datetime;
-                }
-                Thread.Sleep(sleepTimeConnCpu);     //msec
-            }
-            statusConnection = false;
-            return null;   // There aren't data
-        }
-
         private Datetime ReadDatetimeLogics(Plc plc, int startByteAdress)
         {
-            int dataBlock = itemWorkCenter.DataBlockDatetime;
-            int[] dateTimeArray = new int[6];      
-            int addStepBytes = startByteAdress * byteStep;
+            int dataBlock = workCenterSettings.DataBlockDatetime;
+            int[] dateTimeArray = new int[6];
+            int addStepBytes = startByteAdress * workCenterSettings.ByteStepDB;
 
             Datetime modelDateTime = new Datetime();
             try
-            {                
+            {
                 if (plc.IsConnected)
                 {
                     for (int i = 0; i < dateTimeArray.Length; i++)
@@ -140,7 +182,7 @@ namespace SeeAllClassLibrary.Controllers
                     }
                     modelDateTime.DatetimeId = Convert.ToInt64(getIdDateTimeForReadDatetime(dateTimeArray).ToString());
                     modelDateTime.DatetimeValue = getDateTimeForReadDatetime(dateTimeArray);
-                    modelDateTime.PointId = itemWorkCenter.PointId;
+                    modelDateTime.PointId = workCenter.PointId;
                     return modelDateTime;
                 }
                 else
@@ -179,141 +221,13 @@ namespace SeeAllClassLibrary.Controllers
             return new DateTime(dateTimeArray[0], dateTimeArray[1], dateTimeArray[2], dateTimeArray[3], dateTimeArray[4], dateTimeArray[5]);
         }
 
-        public LimitsCpu ReadLimits()
-        {
-            for (int i = 0; i < numberAttempts; i++)      // counter
-            {
-                LimitsCpu limitsCpu = ReadLimitsLogics();
-                if (limitsCpu != null)
-                {
-                    statusConnection = true;
-                    CheckWriteReadEqually(limitsCpu);      // for check
-                    return limitsCpu;                      // There are data
-                }
-                Thread.Sleep(sleepTimeConnCpu);     //msec
-            }
-            statusConnection = false;
-            //TODO need a logger
-            return null;   // There aren't data
-        }
-
-        private LimitsCpu ReadLimitsLogics()
-        {
-            LimitsCpu limitsCpu = null;
-            try
-            {
-                using (var plc = new Plc(
-                    cpuType,
-                    itemWorkCenter.PLCIp,
-                    (short)itemWorkCenter.RackCPU,
-                    (short)itemWorkCenter.SlotCPU))   //"172.17.132.200"
-                {
-                    Thread.Sleep(waitingTime);
-                    plc.Open();
-                    if (plc.IsConnected)
-                    {
-                        int dBLimit = itemWorkCenter.DataBlockLimit;
-                        limitsCpu = new LimitsCpu();
-                        Thread.Sleep(waitingTime);
-                        limitsCpu.PositionWrite = GetPlcRead(plc, dBLimit, 0);
-                        limitsCpu.PositionRead = GetPlcRead(plc, dBLimit, 2);
-                        limitsCpu.PositionMin = GetPlcRead(plc, dBLimit, 4);
-                        limitsCpu.PositionMax = GetPlcRead(plc, dBLimit, 6);
-
-                        if (limitsCpu.PositionWrite < limitsCpu.PositionMin)
-                        {
-                            // was "0"
-                            // When PositionWrite < PositionMin
-                            return null;
-                        }
-
-                        return limitsCpu;
-                    }
-                    else
-                    {
-                        return null;
-                        //TODO need a logger
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                return null;
-                //TODO need a logger
-            }
-        }
-
         private int GetPlcRead(Plc plc, int dataBlock, int startByteAdress)
         {
             return Convert.ToInt32(plc.Read(DataType.DataBlock, dataBlock, startByteAdress, VarType.Int, 1));
         }
 
-        public void WritePositionLimitsCpu(int newPositionRead)
-        {
-            try
-            {
-                using (var plc = new Plc(
-                    cpuType,
-                    itemWorkCenter.PLCIp,
-                    (short)itemWorkCenter.RackCPU,
-                    (short)itemWorkCenter.SlotCPU))   //"172.17.132.200"       "127.0.0.1"
-                {
-                    Thread.Sleep(waitingTime);
-                    plc.Open();
-                    if (plc.IsConnected)
-                    {
-                        statusConnection = true;
-                        plc.Write(dbPLC + itemWorkCenter.DataBlockLimit + dbwPLC, newPositionRead);
-                    }
-                    else
-                    {
-                        statusConnection = false;
-                        //TODO need a logger
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                statusConnection = false;
-                //TODO need a logger
-            }
-        }
-
-        public void WritePositionLimitsCpu1(int nDb, int newPositionRead)
-        {
-            try
-            {
-                using (var plc = new Plc(
-                    cpuType,
-                    itemWorkCenter.PLCIp,
-                    (short)itemWorkCenter.RackCPU,
-                    (short)itemWorkCenter.SlotCPU))   //"172.17.132.200"       "127.0.0.1"
-                {
-                    Thread.Sleep(waitingTime);
-                    plc.Open();
-                    if (plc.IsConnected)
-                    {
-                        statusConnection = true;
-                        //plc.Write("DB3.DBW2", 44);
-                        plc.Write(DataType.DataBlock, 3, 0, newPositionRead);
-                        //plc.Write(dbPLC + itemWorkCenter.DataBlockLimit + ".DBW" + nDb, newPositionRead);
-                    }
-                    else
-                    {
-                        statusConnection = false;
-                        //TODO need a logger
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                statusConnection = false;
-                //TODO need a logger
-            }
-        }
-
         // IF value = 0..9 THERE value = "0" + value
-        public string NormalIntToString(int value)
+        private string NormalIntToString(int value)
         {
             if (value <= 9)
             {
@@ -325,18 +239,24 @@ namespace SeeAllClassLibrary.Controllers
             }
         }
 
-        /// <summary>
-        /// if(PositionRead == PositionWrite) checkWriteReadEqually = true;
-        /// </summary>
-        private void CheckWriteReadEqually(LimitsCpu limitsCpu)
+        public string GetNameCpu(Dictionary<string, string> dictionary)
         {
-            if (limitsCpu.PositionRead == limitsCpu.PositionWrite)
+            string nameCpu = "";
+
+            try
             {
-                equalityCheck = true;
+                nameCpu = UtilityClass.StringFromDictionary(dictionary, "PlcName");
+                return nameCpu;
             }
-            else
+
+            catch (ArgumentNullException argumentNullException)
             {
-                equalityCheck = false;
+                throw;
+            }
+
+            catch (Exception exception)
+            {
+                throw;
             }
         }
     }

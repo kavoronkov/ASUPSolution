@@ -34,7 +34,7 @@ namespace ASUPWebApplication.Infrastructure
             kernel.Bind<ISeeAllRepository>().To<EFSeeAllRepository>();
             kernel.Bind<IDirectoriesRepository>().To<EFDirectoriesRepository>();
             kernel.Bind<IModelsRepository>().To<EFModelsRepository>();
-            kernel.Bind<ISettingsRepository>().To<EFSettingsRepository>();
+            // kernel.Bind<ISettingsRepository>().To<EFSettingsRepository>();
         }
     }
 }

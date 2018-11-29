@@ -45,13 +45,14 @@ namespace SeeAllClassLibrary.Controllers
 
         private void CreateObjectWorkPoints(List<WorkCenter> listWorkCenter)
         {
+
             Task task = new Task(() => new WorkingPLC(listWorkCenter[0]));
             task.Start();
 
             //new WorkingPLC(listWorkCenter[0]);
-            //foreach (WorkCenter itemWorkCenter in listWorkCenter)
+            //foreach (WorkCenter workCenter in listWorkCenter)
             //{
-            //    new WorkingPLC(itemWorkCenter);
+            //    new WorkingPLC(workCenter);
             //}
         }
     }

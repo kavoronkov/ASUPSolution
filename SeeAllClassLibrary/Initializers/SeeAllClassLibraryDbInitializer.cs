@@ -75,37 +75,62 @@ namespace SeeAllClassLibrary.Initializers
             context.SaveChanges();
             // -------------------------------------------------------------------------------------------------------
 
-            context.WorkCenters.Add(new WorkCenter
+            WorkCenter workCenter = new WorkCenter();
+            workCenter.DictionaryWorkCenterSettings = new Dictionary<string, string>
             {
-                PLCIp = "192.168.1.50",
-                CpuType = 1,
-                RackCPU = 0,
-                SlotCPU = 1,
-                DataBlockDatetime = 2,
-                DataBlockLimit = 3,                
-                MicroDowntime = 60,
-                Cycle = 120,
-                Work = false,
-                Transitions = "7,15,23",
-                PointId = context.Points.FirstOrDefault(x => x.PointName == "Prokat_UchastokProkata_TPC5_Interpipe_NTRP").PointId
-            });
+                ["PlcName"] = "Siemens",
+                ["PlcIp"] = "192.168.1.200",
+                ["ThreadSleepTime"] = "100",
+                ["NumberAttemptsConnection"] = "10",
+                ["ConnectionSleepTime"] = "100",
+                ["TypeCpu"] = "30",
+                ["RackCpu"] = "0",
+                ["SlotCpu"] = "1",
+                ["DataBlockDatetime"] = "2",
+                ["ByteStepDB"] = "12",
+                ["ExNumberOverflowDB"] = "-2146233088",
+                ["Transitions"] = "7,15,23",
+                ["MicroDowntime"] = "60",
+                ["Cycle"]= "120",
+                ["Work"] = "false"
+            };
+            workCenter.DictionarySerializeJSON();
+            workCenter.PointId = context.Points.FirstOrDefault(x => x.PointName == "Prokat_UchastokProkata_TPC5_Interpipe_NTRP").PointId;
+
+            context.WorkCenters.Add(workCenter);
             context.SaveChanges();
 
-            //context.WorkCenters.Add(new WorkCenter
-            //{
-            //    PLCIp = "192.168.0.201",
-            //    CpuType = 4,
-            //    RackCPU = 0,
-            //    SlotCPU = 2,
-            //    DataBlockLimit = 41,
-            //    DataBlockDatetime = 35,
-            //    MicroDowntime = 60,
-            //    Cycle = 120,
-            //    Work = false,
-            //    Transitions = "7,15,23",
-            //    PointId = context.Points.FirstOrDefault(x => x.PointName == "Prokat_UchastokProkata_TPC5_Interpipe_NTRP").PointId
-            //});
-            //context.SaveChanges();
+            // context.WorkCenters.Add(new WorkCenter
+            // {
+            //     PLCIp = "192.168.1.200",
+            //     CpuType = 30,
+            //     RackCPU = 0,
+            //     SlotCPU = 1,
+            //     DataBlockDatetime = 2,
+            //     // DataBlockLimit = 3,                
+            //     MicroDowntime = 60,
+            //     Cycle = 120,
+            //     Work = false,
+            //     Transitions = "7,15,23",
+            //     SettingsPLC = "ThreadSleepTime:100, ",
+            //     PointId = context.Points.FirstOrDefault(x => x.PointName == "Prokat_UchastokProkata_TPC5_Interpipe_NTRP").PointId
+            // });
+
+            // context.WorkCenters.Add(new WorkCenter
+            // {
+            //     PLCIp = "192.168.0.201",
+            //     CpuType = 4,
+            //     RackCPU = 0,
+            //     SlotCPU = 2,
+            //     // DataBlockLimit = 41,
+            //     DataBlockDatetime = 35,
+            //     MicroDowntime = 60,
+            //     Cycle = 120,
+            //     Work = false,
+            //     Transitions = "7,15,23",
+            //     PointId = context.Points.FirstOrDefault(x => x.PointName == "Prokat_UchastokProkata_TPC5_Interpipe_NTRP").PointId
+            // });
+            // context.SaveChanges();
             // -------------------------------------------------------------------------------------------------------
 
             new StarterPoints();
